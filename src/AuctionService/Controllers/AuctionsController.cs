@@ -42,7 +42,8 @@ public class AuctionsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<AuctionDto>> CreateAuctionDto(CreateAuctionDto auctionDto)
+    public async Task<ActionResult<AuctionDto>>
+                CreateAuctionDto(CreateAuctionDto auctionDto)
     {
         var auction = _mapper.Map<Auction>(auctionDto);
         // TODO: Add current user as seller
@@ -59,8 +60,8 @@ public class AuctionsController : ControllerBase
             _mapper.Map<AuctionDto>(auction));
     }
 
-    [HttpPut]
-    public async Task<ActionResult> UpdateAuction(Guid id, UpdateAuctionDto auctionToUpdate)
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateAuction(Guid id, UpdateAuctionDto updateAuctionDto)
     {
         var auction = await _context.Auctions
                 .Include(x => x.Item)
@@ -70,11 +71,11 @@ public class AuctionsController : ControllerBase
             return NotFound();
         }
         // TODO: Check seller == username
-        auction.Item.Make = auctionToUpdate.Make ?? auction.Item.Make;
-        auction.Item.Model = auctionToUpdate.Model ?? auction.Item.Model;
-        auction.Item.Color = auctionToUpdate.Color ?? auction.Item.Color;
-        auction.Item.Mileage = auctionToUpdate.Mileage ?? auction.Item.Mileage;
-        auction.Item.Year = auctionToUpdate.Year ?? auction.Item.Year;
+        auction.Item.Make = updateAuctionDto.Make ?? auction.Item.Make;
+        auction.Item.Model = updateAuctionDto.Model ?? auction.Item.Model;
+        auction.Item.Color = updateAuctionDto.Color ?? auction.Item.Color;
+        auction.Item.Mileage = updateAuctionDto.Mileage ?? auction.Item.Mileage;
+        auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
 
         var result = await _context.SaveChangesAsync() > 0;
 
@@ -99,6 +100,6 @@ public class AuctionsController : ControllerBase
         {
             return BadRequest("Could not update DB");
         }
-        return Ok()`;
+        return Ok();
     }
 }
